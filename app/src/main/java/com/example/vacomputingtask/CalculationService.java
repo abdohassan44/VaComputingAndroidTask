@@ -1,7 +1,10 @@
 package com.example.vacomputingtask;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -12,17 +15,27 @@ import androidx.lifecycle.ViewModelProvider;
 public class CalculationService extends Service {
      Calculator mCalculator;
      EquationViewModel equationViewModel;
+     MyServiceReceiver myServiceReceiver;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        mCalculator = new Calculator();
-        equationViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(EquationViewModel.class);
-
         return null;
     }
 
     @Override
+    public void onCreate() {
+        myServiceReceiver = new MyServiceReceiver();
+        mCalculator = new Calculator();
+        equationViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(EquationViewModel.class);
+        super.onCreate();
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("sendEquation");
+        registerReceiver(myServiceReceiver, intentFilter);
         return super.onStartCommand(intent, flags, startId);
 
 
@@ -49,4 +62,19 @@ public class CalculationService extends Service {
 
     }
 
+    class MyServiceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+            if(action.equals("sendEquation")){
+                Equation equation = (Equation) intent.getSerializableExtra("equation");
+                getResult(equation);
+                //  msg = new StringBuilder(msg).reverse().toString();
+
+            }
+        }
+    }
 }
+

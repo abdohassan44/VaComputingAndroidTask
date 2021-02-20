@@ -2,6 +2,7 @@ package com.example.vacomputingtask;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient mFusedLocationClient;
     int PERMISSION_ID = 44;
     EditText ET_number1, ET_number2, ET_deley;
-    TextView t1;
     String s1, s2, s3;
     double num1, num2;
     Button sum, sub, mul, div;
@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mCalculator = new Calculator();
         equationViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(EquationViewModel.class);
+        if(!isMyServiceRunning(CalculationService.class))
+        {
+           Intent myIntent = new Intent(MainActivity.this, CalculationService.class);
+            startService(myIntent);
+        }
         init();
     }
 
@@ -299,6 +304,15 @@ public class MainActivity extends AppCompatActivity {
                 getLastLocation();
             }
         }
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

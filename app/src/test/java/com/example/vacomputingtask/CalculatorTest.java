@@ -1,8 +1,6 @@
 package com.example.vacomputingtask;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import static org.junit.Assert.assertEquals;
 
 public class CalculatorTest {
@@ -27,5 +25,5 @@ public class CalculatorTest {
     public void div() {
         assertEquals(4, 8 / 2);
     }
-    
+
 }
