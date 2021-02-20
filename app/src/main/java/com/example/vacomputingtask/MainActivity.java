@@ -175,7 +175,11 @@ public class MainActivity extends AppCompatActivity {
             equation.setStatus(0);
             equation.setId((int) equationViewModel.insert(equation));
             clearData();
-            getResult(equation);
+            Intent intent = new Intent();
+            intent.setAction("sendEquation");
+            intent.putExtra("equation", equation);
+            sendBroadcast(intent);
+
 
         }
     }
@@ -190,28 +194,6 @@ public class MainActivity extends AppCompatActivity {
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.red));
-    }
-
-    public void getResult(Equation equation) {
-        int deleySec = equation.getDeley() * 1000;
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (equation.getOperationId() == 1) {
-                    equation.setResult(mCalculator.add(equation.getNumber1(), equation.getNumber2()));
-                } else if (equation.getOperationId() == 2) {
-                    equation.setResult(mCalculator.sub(equation.getNumber1() ,equation.getNumber2()));
-                } else if (equation.getOperationId() == 3) {
-                    equation.setResult(mCalculator.mul(equation.getNumber1() ,equation.getNumber2()));
-                } else if (equation.getOperationId() == 4) {
-                    if(equation.getNumber1()==0)equation.setResult(0);
-                   else equation.setResult(mCalculator.div(equation.getNumber1() ,equation.getNumber2()));
-                }
-                equation.setStatus(1);
-                equationViewModel.update(equation);
-            }
-        }, deleySec);
-
     }
 
     public void requestLoction(View v) {
