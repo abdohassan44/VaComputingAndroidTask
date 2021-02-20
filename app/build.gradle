@@ -15,12 +15,36 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    flavorDimensions"dev"
+    productFlavors{
+        qa{
+            dimension "dev"
+            applicationIdSuffix ".qa"
+        }
+        prod {
+            dimension "dev"
+            applicationIdSuffix ".prod"
+        }
+    }
+
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+             customeDebug{
+                 initWith debug
+                 applicationIdSuffix ".customeDebug"
+                 proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+
+             }
+
+
+
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
