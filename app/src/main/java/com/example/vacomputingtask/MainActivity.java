@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    private Calculator mCalculator;
 
     private final LocationCallback mLocationCallback = new LocationCallback() {
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mCalculator = new Calculator();
         equationViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(EquationViewModel.class);
         init();
     }
@@ -191,13 +193,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (equation.getOperationId() == 1) {
-                    equation.setResult(equation.getNumber1() + equation.getNumber2());
+                    equation.setResult(mCalculator.add(equation.getNumber1(), equation.getNumber2()));
                 } else if (equation.getOperationId() == 2) {
-                    equation.setResult(equation.getNumber1() - equation.getNumber2());
+                    equation.setResult(mCalculator.sub(equation.getNumber1() ,equation.getNumber2()));
                 } else if (equation.getOperationId() == 3) {
-                    equation.setResult(equation.getNumber1() * equation.getNumber2());
+                    equation.setResult(mCalculator.mul(equation.getNumber1() ,equation.getNumber2()));
                 } else if (equation.getOperationId() == 4) {
-                    equation.setResult(equation.getNumber1() / equation.getNumber2());
+                    if(equation.getNumber1()==0)equation.setResult(0);
+                   else equation.setResult(mCalculator.div(equation.getNumber1() ,equation.getNumber2()));
                 }
                 equation.setStatus(1);
                 equationViewModel.update(equation);
