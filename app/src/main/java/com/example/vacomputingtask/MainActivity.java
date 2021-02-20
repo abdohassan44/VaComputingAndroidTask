@@ -11,7 +11,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
@@ -40,8 +39,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-    private Calculator mCalculator;
-
     private final LocationCallback mLocationCallback = new LocationCallback() {
 
         @Override
@@ -68,12 +65,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mCalculator = new Calculator();
         equationViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(EquationViewModel.class);
-        if(!isMyServiceRunning(CalculationService.class))
+        if (!isMyServiceRunning(CalculationService.class))
         {
-           Intent myIntent = new Intent(MainActivity.this, CalculationService.class);
-            startService(myIntent);
+            Intent serviceIntent = new Intent(MainActivity.this, CalculationService.class);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+            {
+                MainActivity.this.startForegroundService(serviceIntent);
+            }
+            else startService(serviceIntent);
+
         }
         init();
     }
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         div = findViewById(R.id.div);
         pending = findViewById(R.id.RV_pending);
         solved = findViewById(R.id.RV_solved);
-
         pendingEquationAdapter = new EquationAdapter(new EquationAdapter.WordDiff());
         slovedEquationAdapter = new EquationAdapter(new EquationAdapter.WordDiff());
         pending.setAdapter(pendingEquationAdapter);
@@ -106,12 +106,10 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
-
     public boolean getNumbers() {
         s1 = ET_number1.getText().toString();
         s2 = ET_number2.getText().toString();
         s3 = ET_deley.getText().toString();
-
         if ((s1.equals("") || s2.equals("")) || s3.equals("") || operationId == 0) {
             Toast.makeText(MainActivity.this, "please enter full equation and delay", Toast.LENGTH_LONG).show();
             return false;
@@ -120,12 +118,10 @@ public class MainActivity extends AppCompatActivity {
             num2 = Double.parseDouble(ET_number2.getText().toString());
             deley = Integer.parseInt(ET_deley.getText().toString());
         }
-
         return true;
     }
-
     public void doSum(View v) {
-        sum.setBackgroundColor(getResources().getColor(R.color.black));
+        sum.setBackgroundColor(getResources().getColor(R.color.teal_700));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.red));
@@ -133,21 +129,19 @@ public class MainActivity extends AppCompatActivity {
         operationId = 1;
 
     }
-
     public void doSub(View v) {
         sum.setBackgroundColor(getResources().getColor(R.color.red));
-        sub.setBackgroundColor(getResources().getColor(R.color.black));
+        sub.setBackgroundColor(getResources().getColor(R.color.teal_700));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.red));
         operation = "-";
         operationId = 2;
 
     }
-
     public void doMul(View v) {
         sum.setBackgroundColor(getResources().getColor(R.color.red));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
-        mul.setBackgroundColor(getResources().getColor(R.color.black));
+        mul.setBackgroundColor(getResources().getColor(R.color.teal_700));
         div.setBackgroundColor(getResources().getColor(R.color.red));
         operation = "*";
         operationId = 3;
@@ -158,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         sum.setBackgroundColor(getResources().getColor(R.color.red));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
-        div.setBackgroundColor(getResources().getColor(R.color.black));
+        div.setBackgroundColor(getResources().getColor(R.color.teal_700));
         operation = "/";
         operationId = 4;
 
@@ -287,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
