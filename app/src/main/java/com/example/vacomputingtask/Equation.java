@@ -7,35 +7,34 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
 
-
 @Entity(tableName = "equation_table")
 
 public class Equation implements Serializable {
 
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = "id")
-        private int id;
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private int id;
 
-        @ColumnInfo(name = "number1")
-        private double number1;
+    @ColumnInfo(name = "number1")
+    private double number1;
 
-       @ColumnInfo(name = "number2")
-       private double number2;
+    @ColumnInfo(name = "number2")
+    private double number2;
 
-        @ColumnInfo(name = "operation")
-        private String operation;
+    @ColumnInfo(name = "operation")
+    private String operation;
 
-        @ColumnInfo(name = "operationId")
-        private int operationId;
+    @ColumnInfo(name = "operationId")
+    private int operationId;
 
-        @ColumnInfo(name = "result")
-        private double result;
+    @ColumnInfo(name = "result")
+    private double result;
 
-        @ColumnInfo(name = "status")
-        private int status;
+    @ColumnInfo(name = "status")
+    private int status;
 
-        @ColumnInfo(name = "deley")
-        private int deley;
+    @ColumnInfo(name = "deley")
+    private int deley;
 
     public int getId() {
         return id;

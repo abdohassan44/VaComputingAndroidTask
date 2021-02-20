@@ -40,19 +40,28 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final LocationCallback mLocationCallback = new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location mLastLocation = locationResult.getLastLocation();
+            setAddress(mLastLocation);
+
+        }
+    };
     FusedLocationProviderClient mFusedLocationClient;
     int PERMISSION_ID = 44;
-    EditText ET_number1, ET_number2,ET_deley;
+    EditText ET_number1, ET_number2, ET_deley;
     TextView t1;
-    String s1,s2,s3;
+    String s1, s2, s3;
     double num1, num2;
-    Button sum,sub,mul,div;
+    Button sum, sub, mul, div;
     String operation;
-    int operationId=0;
-    int  deley;
-    RecyclerView pending,solved;
+    int operationId = 0;
+    int deley;
+    RecyclerView pending, solved;
+    EquationAdapter pendingEquationAdapter, slovedEquationAdapter;
     private EquationViewModel equationViewModel;
-    EquationAdapter pendingEquationAdapter,slovedEquationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +70,17 @@ public class MainActivity extends AppCompatActivity {
         equationViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(EquationViewModel.class);
         init();
     }
-    public void init()
-    {
+
+    public void init() {
         ET_number1 = findViewById(R.id.num1);
         ET_number2 = findViewById(R.id.num2);
-        ET_deley=findViewById(R.id.deley);
-        sum=findViewById(R.id.sum);
-        sub=findViewById(R.id.sub);
-        mul=findViewById(R.id.mul);
-        div=findViewById(R.id.div);
-        pending=findViewById(R.id.RV_pending);
-        solved=findViewById(R.id.RV_solved);
+        ET_deley = findViewById(R.id.deley);
+        sum = findViewById(R.id.sum);
+        sub = findViewById(R.id.sub);
+        mul = findViewById(R.id.mul);
+        div = findViewById(R.id.div);
+        pending = findViewById(R.id.RV_pending);
+        solved = findViewById(R.id.RV_solved);
 
         pendingEquationAdapter = new EquationAdapter(new EquationAdapter.WordDiff());
         slovedEquationAdapter = new EquationAdapter(new EquationAdapter.WordDiff());
@@ -90,115 +99,105 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
-    public boolean getNumbers()
-    {
+
+    public boolean getNumbers() {
         s1 = ET_number1.getText().toString();
         s2 = ET_number2.getText().toString();
         s3 = ET_deley.getText().toString();
 
-        if ( (s1.equals("") || s2.equals(""))||s3.equals("")||operationId==0)
-        {
-            Toast.makeText(MainActivity.this,"please enter full equation and deley",Toast.LENGTH_LONG).show();
+        if ((s1.equals("") || s2.equals("")) || s3.equals("") || operationId == 0) {
+            Toast.makeText(MainActivity.this, "please enter full equation and delay", Toast.LENGTH_LONG).show();
             return false;
-        }
-        else {
+        } else {
             num1 = Double.parseDouble(ET_number1.getText().toString());
             num2 = Double.parseDouble(ET_number2.getText().toString());
-            deley=Integer.parseInt(ET_deley.getText().toString());
+            deley = Integer.parseInt(ET_deley.getText().toString());
         }
 
         return true;
     }
-    public void doSum(View v)
-    {
+
+    public void doSum(View v) {
         sum.setBackgroundColor(getResources().getColor(R.color.black));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.red));
-        operation="+";
-        operationId=1;
+        operation = "+";
+        operationId = 1;
 
     }
-    public void doSub(View v)
-    {
+
+    public void doSub(View v) {
         sum.setBackgroundColor(getResources().getColor(R.color.red));
         sub.setBackgroundColor(getResources().getColor(R.color.black));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.red));
-        operation="-";
-        operationId=2;
+        operation = "-";
+        operationId = 2;
 
     }
-    public void doMul(View v)
-    {
+
+    public void doMul(View v) {
         sum.setBackgroundColor(getResources().getColor(R.color.red));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.black));
         div.setBackgroundColor(getResources().getColor(R.color.red));
-        operation="*";
-        operationId=3;
+        operation = "*";
+        operationId = 3;
 
     }
-    public void doDiv(View v)
-    {
+
+    public void doDiv(View v) {
         sum.setBackgroundColor(getResources().getColor(R.color.red));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.black));
-        operation="/";
-        operationId=4;
+        operation = "/";
+        operationId = 4;
 
     }
-    public void calculate(View v)
-    {
-        if(getNumbers())
-        {
-            Equation equation=new Equation();
+
+    public void calculate(View v) {
+        if (getNumbers()) {
+            Equation equation = new Equation();
             equation.setDeley(deley);
             equation.setNumber1(num1);
             equation.setNumber2(num2);
             equation.setOperation(operation);
             equation.setOperationId(operationId);
             equation.setStatus(0);
-            equation.setId((int)  equationViewModel.insert(equation));
+            equation.setId((int) equationViewModel.insert(equation));
             clearData();
             getResult(equation);
 
         }
     }
-    public void clearData()
-    {
+
+    public void clearData() {
         ET_number1.setText("");
         ET_number2.setText("");
         ET_deley.setText("");
-        operationId=0;
-        operation="";
+        operationId = 0;
+        operation = "";
         sum.setBackgroundColor(getResources().getColor(R.color.red));
         sub.setBackgroundColor(getResources().getColor(R.color.red));
         mul.setBackgroundColor(getResources().getColor(R.color.red));
         div.setBackgroundColor(getResources().getColor(R.color.red));
     }
-    public void getResult(Equation equation)
-    {
-        int deleySec=equation.getDeley()*1000;
+
+    public void getResult(Equation equation) {
+        int deleySec = equation.getDeley() * 1000;
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(equation.getOperationId()==1)
-                {
-                    equation.setResult(equation.getNumber1()+equation.getNumber2());
-                }
-                else if (equation.getOperationId()==2)
-                {
-                    equation.setResult(equation.getNumber1()-equation.getNumber2());
-                }
-                else if (equation.getOperationId()==3)
-                {
-                    equation.setResult(equation.getNumber1()*equation.getNumber2());
-                }
-                else if (equation.getOperationId()==4)
-                {
-                    equation.setResult(equation.getNumber1()/equation.getNumber2());
+                if (equation.getOperationId() == 1) {
+                    equation.setResult(equation.getNumber1() + equation.getNumber2());
+                } else if (equation.getOperationId() == 2) {
+                    equation.setResult(equation.getNumber1() - equation.getNumber2());
+                } else if (equation.getOperationId() == 3) {
+                    equation.setResult(equation.getNumber1() * equation.getNumber2());
+                } else if (equation.getOperationId() == 4) {
+                    equation.setResult(equation.getNumber1() / equation.getNumber2());
                 }
                 equation.setStatus(1);
                 equationViewModel.update(equation);
@@ -207,21 +206,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public void requestLoction(View v)
-    {
+    public void requestLoction(View v) {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         getLastLocation();
     }
 
-    private void setAddress(Location location)
-    {
+    private void setAddress(Location location) {
         Geocoder geocoder;
-        TextView textView=findViewById(R.id.TV_location);
-        textView.setVisibility(View.VISIBLE);
+        TextView textView = findViewById(R.id.TV_location);
         geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-
-
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
@@ -230,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
             String country = addresses.get(0).getCountryName();
             String postalCode = addresses.get(0).getPostalCode();
             String knownName = addresses.get(0).getFeatureName();
+            textView.setVisibility(View.VISIBLE);
             textView.setText(address);// Here 1 represent max location result to returned, by documents it recommended 1 to 5
         } catch (IOException e) {
             e.printStackTrace();
@@ -251,8 +245,6 @@ public class MainActivity extends AppCompatActivity {
                             requestNewLocationData();
                         } else {
                             setAddress(location);
-
-
                         }
                     }
                 });
@@ -305,14 +297,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private final LocationCallback mLocationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
-            setAddress(mLastLocation);
-
-        }
-    };
 
 }

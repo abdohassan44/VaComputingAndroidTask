@@ -12,17 +12,27 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+@Database(entities = {Equation.class}, version = 1, exportSchema = false)
+abstract class EquationٍRoomDatabase extends RoomDatabase {
 
-  @Database(entities = {Equation.class}, version = 1, exportSchema = false)
-  abstract class EquationٍRoomDatabase extends RoomDatabase{
 
-
-    abstract EquationDao equationDao();
-
-    private static volatile EquationٍRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    private static volatile EquationٍRoomDatabase INSTANCE;
+    private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+
+            databaseWriteExecutor.execute(() -> {
+                // Populate the database in the background.
+                // If you want to start with more words, just add them.
+                EquationDao dao = INSTANCE.equationDao();
+
+            });
+        }
+    };
 
     static EquationٍRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -37,18 +47,6 @@ import java.util.concurrent.Executors;
         return INSTANCE;
     }
 
-      private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
-          @Override
-          public void onCreate(@NonNull SupportSQLiteDatabase db) {
-              super.onCreate(db);
-
-              databaseWriteExecutor.execute(() -> {
-                  // Populate the database in the background.
-                  // If you want to start with more words, just add them.
-                  EquationDao dao = INSTANCE.equationDao();
-
-              });
-          }
-      };
+    abstract EquationDao equationDao();
 
 }

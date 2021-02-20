@@ -9,9 +9,9 @@ import java.util.List;
 
 public class EquationViewModel extends AndroidViewModel {
 
-    private EquationRepository equationRepository;
-    private final LiveData<List<Equation>>allpendingEquation;
-    private final LiveData<List<Equation>>allslovedEquation;
+    private final LiveData<List<Equation>> allpendingEquation;
+    private final LiveData<List<Equation>> allslovedEquation;
+    private final EquationRepository equationRepository;
 
     public EquationViewModel(Application application) {
         super(application);
@@ -23,13 +23,15 @@ public class EquationViewModel extends AndroidViewModel {
     LiveData<List<Equation>> getAllpendingEquation() {
         return allpendingEquation;
     }
+
     LiveData<List<Equation>> getAllslovedEquation() {
         return allslovedEquation;
     }
 
     long insert(Equation equation) {
-       return equationRepository.insertEquation(equation);
+        return equationRepository.insertEquation(equation);
     }
+
     void update(Equation equation) {
         equationRepository.updateEquation(equation);
     }

@@ -5,17 +5,16 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class EquationRepository {
-    private EquationDao equationDao;
-    private LiveData<List<Equation>> allpendingEquation;
-    private LiveData<List<Equation>> allslovedEquation;
+    private final EquationDao equationDao;
+    private final LiveData<List<Equation>> allpendingEquation;
+    private final LiveData<List<Equation>> allslovedEquation;
     private long rowId = -1;
     private CountDownLatch mLatch;
-
-
 
 
     EquationRepository(Application application) {
@@ -29,11 +28,12 @@ public class EquationRepository {
     LiveData<List<Equation>> getAllPendingEquations() {
         return allpendingEquation;
     }
+
     LiveData<List<Equation>> getAllSlovedEquations() {
         return allslovedEquation;
     }
 
-//    void insertEquation(Equation equation) {
+    //    void insertEquation(Equation equation) {
 //        return new insertAsyncTask(equationDao).execute(equation).get();
 //
 //        EquationٍRoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -52,11 +52,13 @@ public class EquationRepository {
 
         return rowId;
     }
+
     void updateEquation(Equation equation) {
         EquationٍRoomDatabase.databaseWriteExecutor.execute(() -> {
             equationDao.update(equation);
         });
     }
+
     class insertAsyncTask extends AsyncTask<Equation, Void, Void> {
 
         public insertAsyncTask(EquationDao equationDao) {
@@ -65,7 +67,7 @@ public class EquationRepository {
 
         @Override
         protected Void doInBackground(Equation... equations) {
-            rowId = equationDao.insert (equations[0]);
+            rowId = equationDao.insert(equations[0]);
             mLatch.countDown();
             return null;
         }

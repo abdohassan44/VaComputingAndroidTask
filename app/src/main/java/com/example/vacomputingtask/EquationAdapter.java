@@ -1,6 +1,7 @@
 package com.example.vacomputingtask;
 
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -32,7 +33,7 @@ public class EquationAdapter extends ListAdapter<Equation, EquationViewHolder> {
 
         @Override
         public boolean areContentsTheSame(@NonNull Equation oldItem, @NonNull Equation newItem) {
-            return oldItem.getId()==newItem.getId();
+            return oldItem.getId() == newItem.getId();
         }
     }
 }
